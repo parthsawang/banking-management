@@ -8,7 +8,8 @@ async function connectDB() {
         console.log("database is connected");
     } catch (error) {
         console.error("database connection error:", error);
+        process.exit(1)
     }
 }
 
-module.exports = connectDB
+module.exports = connectDB;
