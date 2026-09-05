@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const { kMaxLength } = require('node:buffer')
 const { error, timeStamp } = require('node:console')
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "Email is required for creating a user"],
@@ -36,6 +36,24 @@ const userSchema = mongoose.Schema({
     timestamps: true 
   })
 
-userSchema.pre("save",async function(next){
-    
+// convert string password into hased before saving in mongodb
+userSchema.pre("save",async function(next){ // use when user changed the current password into new
+    if(!this.isModified("password")){
+        return next()
+    }
+
+    const hash = await bcrypt.hash(this.password,10);
+    this.password = hash
+
+    return next()
 })
+
+// campare hased of password in database with the login time hased password  
+userSchema.methods.comparePassword = async function (password) {
+            return await bcrypt.compare(password,this.password)
+}
+
+
+const userModel = mongoose.model("user",userSchema)
+
+module.exports = userModel
