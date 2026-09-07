@@ -1,8 +1,8 @@
 const { Timestamp } = require('mongodb')
 const mongoose = require('mongoose')
 const { kMaxLength } = require('node:buffer')
-const { error, timeStamp } = require('node:console')
-
+const { error, timeStamp } = require('node:console');
+const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -39,13 +39,13 @@ const userSchema = new mongoose.Schema({
 // convert string password into hased before saving in mongodb
 userSchema.pre("save",async function(next){ // use when user changed the current password into new
     if(!this.isModified("password")){
-        return next()
+        return 
     }
 
     const hash = await bcrypt.hash(this.password,10);
     this.password = hash
 
-    return next()
+    return 
 })
 
 // campare hased of password in database with the login time hased password  

@@ -1,55 +1,42 @@
-const userModel = require('../model/user.model');
-const jwt = require('jsonwebtoken');
+const userModel = require("../model/user.model");
+const jwt = require("jsonwebtoken");
 
-async function loginController(req,res) {
+async function registerController(req, res) {
+    const { email, password, name } = req.body;
 
-    const { email , password , name } = req.body
-
-    // check weather user is already exist or not 
-    const isExists= await userModel.findOne({
+    const isExists = await userModel.findOne({
         email: email
-    })
-
-    if(isExists){
-        return res.status(422).json({
-            message: "user is already exist with email."
-        })
-    }
-
-    // creating new user here
-
-    const user = await userModel.create({
-        email , password , name
     });
 
-
-    // generating jwt token
-    
-
-    const token = jwt.sign({
-        userId: user._id,   // payload
-    }, process.env.JWT_SECRET, {
-        expiresIn: "3d"
+    if (isExists) {
+        return res.status(422).json({
+            message: "user already exists with email."
+        });
     }
-)
 
+    const user = await userModel.create({
+        email,
+        password,
+        name
+    });
 
+    const token = jwt.sign(
+        {
+            userId: user._id
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: "3d"
+        }
+    );
 
+    res.cookie("token", token);
 
-        
-    }
-    
+    res.status(201).json({
+        _id: user._id,
+        email: user.email,
+        name: user.name
+    });
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-module.exports = loginController
+module.exports = registerController;
