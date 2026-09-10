@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Email is required for creating a user"],
         trim: true,
-        unique: [true,"Email already exists"],
+       unique: [true,"Email already exists"],
         lowercase: true,
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
     },
@@ -39,13 +39,13 @@ const userSchema = new mongoose.Schema({
 // convert string password into hased before saving in mongodb
 userSchema.pre("save",async function(next){ // use when user changed the current password into new
     if(!this.isModified("password")){
-        return next()
+        return 
     }
 
     const hash = await bcrypt.hash(this.password,10);
     this.password = hash
 
-    return next()
+    return
 })
 
 // campare hased of password in database with the login time hased password  
