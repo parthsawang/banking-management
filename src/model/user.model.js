@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     match: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@!%*?&])[A-Za-z\d$@!%*?&]{8,}$/,
     message: props => `${props.value} is not a valid password!` ,
     minlength: [6,"password should be contain atlease 6 char"],
-    select: false, //password default query mein hi nahi aata
+    select: false, //password default query mein hi nahi aata but login time mein aana chhiye so do something
   }
   
 },{
@@ -39,13 +39,13 @@ const userSchema = new mongoose.Schema({
 // convert string password into hased before saving in mongodb
 userSchema.pre("save",async function(next){ // use when user changed the current password into new
     if(!this.isModified("password")){
-        return 
+        return next()
     }
 
     const hash = await bcrypt.hash(this.password,10);
     this.password = hash
 
-    return 
+    return next()
 })
 
 // campare hased of password in database with the login time hased password  
