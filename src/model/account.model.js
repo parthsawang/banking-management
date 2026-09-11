@@ -4,13 +4,14 @@ const accountSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: [true, "Account must be associated with user"]
+        required: [true, "Account must be associated with user"],
+        index: true
     },
 
     accountNumber: {
         type: String,
         required: [true, "Account number is required"],
-        unique: true
+        unique: true // fast searching/querying
     },
 
     status: {
@@ -33,5 +34,12 @@ const accountSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+/*
+{ email: 1 }   // ascending
+{ email: -1 }  // descending
+*/
+
+accountSchema.index({user: 1 , email: 1}) // compound index   
 
 module.exports = mongoose.model("Account", accountSchema);
