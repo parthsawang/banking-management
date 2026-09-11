@@ -8,11 +8,6 @@ const accountSchema = new mongoose.Schema({
         index: true
     },
 
-    accountNumber: {
-        type: String,
-        required: [true, "Account number is required"],
-        unique: true // fast searching/querying
-    },
 
     status: {
         type: String,
