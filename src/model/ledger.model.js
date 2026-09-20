@@ -36,3 +36,39 @@ const ledgerSchema = new mongoose.Schema({
         index: true
     }
 })
+
+
+
+function preventLedgerModification() {
+    throw new Error(
+        "Ledger entries are immutable and cannot be modified or deleted"
+    );
+}
+
+// Document mutation
+ledgerSchema.pre("save", preventLedgerModification);
+ledgerSchema.pre("remove", preventLedgerModification);
+
+// Update operations
+ledgerSchema.pre("updateOne", preventLedgerModification);
+ledgerSchema.pre("updateMany", preventLedgerModification);
+ledgerSchema.pre("findOneAndUpdate", preventLedgerModification);
+ledgerSchema.pre("findByIdAndUpdate", preventLedgerModification);
+ledgerSchema.pre("replaceOne", preventLedgerModification);
+
+// Delete operations
+ledgerSchema.pre("deleteOne", preventLedgerModification);
+ledgerSchema.pre("deleteMany", preventLedgerModification);
+ledgerSchema.pre("findOneAndDelete", preventLedgerModification);
+ledgerSchema.pre("findByIdAndDelete", preventLedgerModification);
+ledgerSchema.pre("findOneAndRemove", preventLedgerModification);
+
+
+Ledger.find();
+Ledger.findOne();
+Ledger.findById();
+Ledger.findById().populate();
+
+
+const ledgerModel = mongoose.model('ledger',ledgerSchema)
+module.exports = ledgerModel;
